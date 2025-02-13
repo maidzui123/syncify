@@ -1,0 +1,17 @@
+{
+  "title": {
+    "sign_in": "Sign in"
+  },
+  "label": {
+    "password": "Password",
+    "or_sign_in_gg": "Or",
+    "forgot_password": "Forgot Password"
+  },
+  "error": {
+    "incorrect_password": "Incorrect password",
+    "email_not_found": "Email not found",
+    "account_locked": "Account locked",
+    "invalid_password": "Invalid password",
+    "invalid_email": "Invalid email"
+  }
+}
