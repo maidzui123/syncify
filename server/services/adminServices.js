@@ -527,7 +527,7 @@ const handleGetListPosts = async (userId, res) => {
 
     const posts = await Post.find({ isDeleted: false, isArchived: false })
       .populate("createdBy", "avatar username")
-      .select("title content media createdBy createdAt likes comments")
+      .select("title content media createdBy createdAt likes comments shares")
       .sort({ createdAt: -1 });
 
     const listPostsProcessed = posts.map((post, index) => ({
@@ -539,6 +539,7 @@ const handleGetListPosts = async (userId, res) => {
       createdBy: post.createdBy,
       likes: post.likes.length,
       comments: post.comments.length,
+      shares: post.shares.length,
       date: new Date(post.createdAt).toLocaleDateString("en-GB"),
     }));
 

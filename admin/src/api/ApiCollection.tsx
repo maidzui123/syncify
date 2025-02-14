@@ -1,6 +1,6 @@
 import axios from "axios";
 const API_URL = "http://localhost:3001/api/admin";
-
+const UPLOAD_URL = "http://localhost:3001/api/upload";
 // LOGIN
 export const login = async (email: string, password: string) => {
   const response = await axios
@@ -203,6 +203,27 @@ export const fetchListPosts = async () => {
     });
 
   return response;
+};
+
+// UPLOAD FILE
+export const uploadFile = async (file: any, type = "image", folderName = "post") => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", type);
+  formData.append("folderName", folderName);
+
+  try {
+    const response = await axios.post(UPLOAD_URL, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.data.url; 
+  } catch (error) {
+    console.error("Upload failed:", error);
+    throw error;
+  }
 };
 
 // UPDATE POST
