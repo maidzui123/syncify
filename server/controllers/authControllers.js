@@ -106,6 +106,7 @@ authControllers.updateProfile = async (req, res) => {
       "dob",
       "country",
       "tel",
+      "bio"
     ];
     const updatedData = Object.keys(req.body);
 

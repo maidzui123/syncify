@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  bio: {
+    type: String,
+    required: false,
+  },
   friends: [
     {
       type: mongoose.Schema.Types.ObjectId,
