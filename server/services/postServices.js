@@ -446,17 +446,17 @@ const handleArchivePost = async (userId, postId, res) => {
       });
     }
 
-    if (post.createdBy != userId || checkUser.isAdmin == false) {
+    if (checkUser.archivePosts.includes(postId)) {
       return sendResponse({
         res,
-        status: 401,
-        message: "You are not authorized to archive this post",
-        errorCode: ERROR.POST_ARCHIVE_UNAUTHORIZED,
+        status: 400,
+        message: "Post already archived",
+        errorCode: ERROR.POST_ARCHIVED_ALREADY,
       });
     }
-
-    post.isArchived = !post.isArchived;
-    await post.save();
+    
+    checkUser.archivePosts.push(postId);
+    await checkUser.save();
 
     return sendResponse({
       res,
@@ -882,6 +882,7 @@ const handleGetAllPosts = async (userId, cursor, limit, res) => {
     const userFriends = checkUser.friends;
 
     const query = {
+      _id: { $nin: checkUser.archivePosts },
       isDeleted: false,
       isArchived: false,
       $or: [
@@ -894,7 +895,7 @@ const handleGetAllPosts = async (userId, cursor, limit, res) => {
     };
 
     if (cursor) {
-      query["_id"] = { $lt: cursor };
+      query["_id"]["$lt"] = cursor;
     }
 
     const posts = await Post.find(query)

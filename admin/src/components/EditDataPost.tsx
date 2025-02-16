@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent } from "react";
 import toast from "react-hot-toast";
 import { HiOutlineXMark } from "react-icons/hi2";
-import { updatePost } from "../api/ApiCollection";
+import { updatePost, uploadFile } from "../api/ApiCollection";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface EditDataPostProps {
@@ -21,21 +21,27 @@ const EditDataPost: React.FC<EditDataPostProps> = ({
   const queryClient = useQueryClient();
   // global082
   const [showModal, setShowModal] = React.useState(false);
-  const [file, setFile] = React.useState<File | null>(null);
-  const [preview, setPreview] = React.useState<string | null>(null);
-  const [images, setImages] = React.useState<string[]>([]);
   const [content, setContent] = React.useState(data?.content);
+  const [images, setImages] = React.useState<any>([]);
+
   // global
-  const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
+  const loadImage = async (e: any) => {
     if (e.target.files && e.target.files[0]) {
-      const imageUpload = e.target.files[0];
-      setFile(imageUpload);
-      setPreview(URL.createObjectURL(imageUpload));
+      const file = e.target.files[0];
+      try {
+        const uploadedImageUrl = await uploadFile(file);
+        setImages((prev: any) => [
+          ...prev,
+          { url: uploadedImageUrl, type: "image" },
+        ]);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
 
   const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev: any) => prev.filter((_: any, i: any) => i !== index));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -43,7 +49,7 @@ const EditDataPost: React.FC<EditDataPostProps> = ({
       e.preventDefault();
       await updatePost(data?.postId, {
         content,
-        // media: images,
+        media: images,
       });
 
       queryClient.invalidateQueries({ queryKey: ["allposts"] });
@@ -83,6 +89,7 @@ const EditDataPost: React.FC<EditDataPostProps> = ({
           <p>Created by: {data?.createdBy?.username}</p>
           <p>Likes: {data?.likes}</p>
           <p>Comments: {data?.comments}</p>
+          <p>Shares: {data?.shares}</p>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -99,7 +106,7 @@ const EditDataPost: React.FC<EditDataPostProps> = ({
           />
 
           <div className="w-full flex gap-2 overflow-x-auto py-2">
-            {images.map((src: any, index) => (
+            {images.map((src: any, index: any) => (
               <div key={index} className="relative">
                 <img
                   src={src?.url}
@@ -115,6 +122,7 @@ const EditDataPost: React.FC<EditDataPostProps> = ({
               </div>
             ))}
           </div>
+          <input type="file" onChange={loadImage} className="mt-2" />
           <button
             className={`mt-5 btn btn-primary
               btn-block col-span-full font-semibold`}

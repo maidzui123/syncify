@@ -69,6 +69,7 @@ const ShowDataPost: React.FC<ShowDataPostProps> = ({
           <p>Created by: {data?.createdBy?.username}</p>
           <p>Likes: {data?.likes}</p>
           <p>Comments: {data?.comments}</p>
+          <p>Shares: {data?.shares}</p>
         </div>
         <form
           onSubmit={handleSubmit}
