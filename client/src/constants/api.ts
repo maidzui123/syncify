@@ -33,7 +33,8 @@ export const POST_URL = {
     SHARE_POST_URL: '/api/posts/share',
     ARCHIVE_POST_URL: '/api/posts/archive',
     DELETE_POST_URL: '/api/posts',
-    EDIT_POST_URL: '/api/posts'
+    EDIT_POST_URL: '/api/posts',
+    GET_MY_SHARE_POST_URL: '/api/posts/sharing/me'
 }
 
 export const CHAT_URL = {

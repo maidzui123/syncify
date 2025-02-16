@@ -10,25 +10,20 @@ import type {userDataDef} from "@/constants/types/auth.ts";
 import {convertBlobToFile} from "@/utils/convert.ts";
 import {useToast} from "@/hooks/use-toast.ts"
 import {mediaDef, postDef} from "@/constants/types/post";
-
-export enum POST_MODAL_ACTION {
-    CREATE,
-    EDIT,
-}
+import {clearEditPost, POST_MODAL_ACTION, setEditPost} from "@/redux/reducers/editPostReducer";
+import {useDispatch} from "react-redux";
 
 type newPostProps = {
     userData: userDataDef | undefined,
     open: boolean,
-    handleClose: (postData?: postDef, isEdit?: boolean) => void;
     initPostData?: postDef;
     action?: POST_MODAL_ACTION
 }
 
 const NewPostModal = (props: newPostProps) => {
 
-    const {userData, open, handleClose, initPostData, action = POST_MODAL_ACTION.CREATE } = props
+    const {userData, open, initPostData, action = POST_MODAL_ACTION.CREATE } = props
     const {toast} = useToast()
-    // console.log(props)
 
     const [selectEmoji, setSelectEmoji] = useState<boolean>(false)
     const [postText, setPostText] = useState<string>('')
@@ -37,13 +32,18 @@ const NewPostModal = (props: newPostProps) => {
     const mediaRef = useRef<HTMLInputElement>(null)
     const imageCountRef = useRef<number>(0)
     const videoCountRef = useRef<number>(0)
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        if (initPostData) {
+        console.log(initPostData)
+        if(open && !initPostData){
+            setPostText('')
+            setMediaList([])
+        }else if(initPostData){
             setPostText(initPostData.content)
             setMediaList(initPostData.media)
         }
-    }, [initPostData]);
+    }, [initPostData, open]);
 
     const handleMediaUploadAsync = async () => {
         const mediaPromiseList = []
@@ -79,7 +79,11 @@ const NewPostModal = (props: newPostProps) => {
                 media: mediaLink
             }).then(res => {
                 if (res.status == 200) {
-                    handleClose(res.data, true)
+                    dispatch(setEditPost({
+                        open: false,
+                        editPostData: res.data,
+                        action: POST_MODAL_ACTION.EDIT,
+                    }))
                 }
             })
         } else {
@@ -88,7 +92,11 @@ const NewPostModal = (props: newPostProps) => {
                 media: mediaLink
             }).then(res => {
                 if (res.status == 200) {
-                    handleClose(res.data, false)
+                    dispatch(setEditPost({
+                        open: false,
+                        editPostData: res.data,
+                        action: POST_MODAL_ACTION.CREATE,
+                    }))
                 }
             })
         }
@@ -130,7 +138,7 @@ const NewPostModal = (props: newPostProps) => {
         setMediaList(newMediaList)
     }
 
-    return <Modal width={600} open={open} onClose={handleClose} showHeader title={action == POST_MODAL_ACTION.EDIT ? t("title:edit_post") : t("title:new_post")} showBottom
+    return <Modal width={600} open={open} onClose={() => dispatch(clearEditPost())} showHeader title={action == POST_MODAL_ACTION.EDIT ? t("title:edit_post") : t("title:new_post")} showBottom
                   style={{backgroundColor: "#181818", color: '#ffffff'}}
                   renderBottom={() => <Button variant='outline' className='text-white bg-transparent'
                                               onClick={handleUploadPost}>{action == POST_MODAL_ACTION.EDIT ? t("button:edit") : t("button:upload")}</Button>}>

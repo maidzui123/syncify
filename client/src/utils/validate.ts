@@ -16,8 +16,7 @@ export const signInSchema = object({
 export const signUpSchema = signInSchema.shape({
     username: string()
         .required(i18n.t("error:require_username"))
-        .max(50, i18n.t("error:username_too_long"))
-        .matches(/^[a-zA-Z0-9]+$/, i18n.t("error:username_not_contain_special_characters")),
+        .max(50, i18n.t("error:username_too_long")),
     confirmPassword: string()
         .required(i18n.t("error:require_confirm_password"))
         .min(8, i18n.t("error:password_at_least_8"))

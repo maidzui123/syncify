@@ -14,66 +14,41 @@ import {
 } from "@/components/ui"
 import Resources from "@/constants/resource";
 import {ReactNode, useEffect, useState} from 'react'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from "@/redux/store"
 import {Bell, ContactRound, Home, LogOut, MessageCircle, Plus, Search, Settings, Users} from 'lucide-react';
 import {NewPostModal} from "@/components";
 import {useLocation, useNavigate} from "react-router";
 import {t} from "i18next";
 import {useAuth} from "@/hooks";
-import {postDef} from "@/constants/types/post";
-import {POST_MODAL_ACTION} from "@/components/NewPostModal";
+import {toggleModal} from "@/redux/reducers/editPostReducer";
 
 type mainLayoutProps = {
     children: ReactNode;
-    isPostModalOpen?: boolean;
-    setPostModalOpen?: (state: boolean) => void;
-    setPostData?: (postData: postDef, isEdit: boolean) => void;
-    initPostData?: postDef;
 }
 
 const tabIndex = ['/', '/search', '/chats', '/notifications', '/profile','/friends']
 
 const MainLayout = (props: mainLayoutProps) => {
 
-    const {children, isPostModalOpen, setPostModalOpen, setPostData, initPostData} = props
+    const {children} = props
 
     const [activeTab, setActiveTab] = useState<number>(0)
-    const [isUploadPostModalOpen, setUploadPostModalOpen] = useState<boolean>(false)
 
     const userData = useSelector((state: RootState) => state.auth.value)
+    const editPostData = useSelector((state: RootState) => state.editPost.value)
     const navigate = useNavigate()
     const location = useLocation()
+    const dispatch = useDispatch()
     const { logOut } = useAuth()
 
     useEffect(() => {
         highlightActiveTab()
     }, []);
 
-    useEffect(() => {
-        if(isPostModalOpen != undefined){
-            setUploadPostModalOpen(isPostModalOpen)
-        }
-    }, [isPostModalOpen])
-
-    useEffect(() => {
-        if (setPostModalOpen) {
-            setPostModalOpen(isUploadPostModalOpen)
-        }
-    }, [isUploadPostModalOpen])
-
     const highlightActiveTab = () => {
         const index = tabIndex.findIndex(item => item == location.pathname)
         setActiveTab(index)
-    }
-
-    const handleClosePost = (postData?: postDef, isEdit?: boolean) => {
-        if(postData && isEdit != undefined && setPostData){
-            setPostData(postData, isEdit)
-        }
-        if(setPostModalOpen){
-            setPostModalOpen(false)
-        }
     }
 
     return <div className='w-screen h-screen flex bg-[#0a0a0a] overflow-hidden'>
@@ -119,7 +94,7 @@ const MainLayout = (props: mainLayoutProps) => {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <button className='p-1 my-3 cursor-pointer rounded-full transition bg-white'
-                                onClick={() => setUploadPostModalOpen(true)}>
+                                onClick={() => dispatch(toggleModal())}>
                             <Plus color='#000000' size={32}/>
                         </button>
                     </TooltipTrigger>
@@ -136,7 +111,7 @@ const MainLayout = (props: mainLayoutProps) => {
                         </button>
                     </TooltipTrigger>
                     <TooltipContent side='right' sideOffset={12}>
-                        <p className='text-base'>{t("tooltip:profile")}</p>
+                        <p className='text-base'>{t("tooltip:notification")}</p>
                     </TooltipContent>
                 </Tooltip>
                 <Tooltip>
@@ -148,7 +123,7 @@ const MainLayout = (props: mainLayoutProps) => {
                         </button>
                     </TooltipTrigger>
                     <TooltipContent side='right' sideOffset={12}>
-                        <p className='text-base'>{t("tooltip:notification")}</p>
+                        <p className='text-base'>{t("tooltip:profile")}</p>
                     </TooltipContent>
                 </Tooltip>
                 <Tooltip>
@@ -188,7 +163,7 @@ const MainLayout = (props: mainLayoutProps) => {
         <div className='flex-1 h-full flex'>
             {children}
         </div>
-        <NewPostModal initPostData={initPostData} open={isUploadPostModalOpen} handleClose={handleClosePost} userData={userData?.user} action={!initPostData ? POST_MODAL_ACTION.CREATE : POST_MODAL_ACTION.EDIT}/>
+        <NewPostModal open={editPostData.open} initPostData={editPostData.editPostData} userData={userData?.user} action={editPostData.action}/>
     </div>
 }
 

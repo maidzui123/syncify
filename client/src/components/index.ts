@@ -7,6 +7,7 @@ import Swiper from "./Swiper";
 import Post from './Post'
 import SendInput from './SendInput';
 import ContactList from "./ContactList";
+import EditProfileModal from "./EditProfileModal";
 
 export {
     OTP,
@@ -17,5 +18,6 @@ export {
     Swiper,
     Post,
     SendInput,
-    ContactList
+    ContactList,
+    EditProfileModal
 }
