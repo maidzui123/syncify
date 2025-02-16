@@ -70,6 +70,13 @@ const userSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  archivePosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "posts",
+      default: [],
+    },
+  ],
   isGoogle: {
     type: Boolean,
     default: false,
