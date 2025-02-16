@@ -242,7 +242,9 @@ const NewUserInfo = (props: newUserInfoProps) => {
             </div>
             <Button type='submit' className='order-last col-span-4 justify-self-end'>{t("button:complete")}</Button>
         </form>
-        <Modal width={480} open={editModalOpen} onClose={() => setEditModalOpen(false)} showHeader showBottom completeLabel={t("button:upload")} onComplete={handleSave}>
+        <Modal width={480} open={editModalOpen} onClose={() => setEditModalOpen(false)} showHeader showBottom renderBottom={
+            () => <Button onClick={handleSave}>{t("button:upload")}</Button>
+        }>
             <AvatarEditor
                 ref={cropRef}
                 image={image}

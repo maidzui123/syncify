@@ -1,6 +1,6 @@
-import {memo, useState, useEffect, useRef} from 'react'
+import {memo, useEffect, useRef, useState} from 'react'
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
 import {t} from 'i18next'
 import {ContactList, Post} from "@/components";
@@ -10,25 +10,26 @@ import {postDef} from "@/constants/types/post";
 import Lottie from "lottie-react";
 import LoadingAnimation from "@/assets/lotties/loading.json";
 import {MainLayout} from "@/pages";
+import {clearEditPost, POST_MODAL_ACTION, setEditPost} from "@/redux/reducers/editPostReducer.ts";
 
 const HomePage = () => {
 
-    const [postModal, setPostModal] = useState<boolean>(false)
     const [posts, setPosts] = useState<postDef[]>([])
     const [postCursor, setPostCursor] = useState<string>('')
-    const [editPost, setEditPost] = useState<postDef>()
 
     const userData = useSelector((state: RootState) => state.auth.value.user)
+    const editPost = useSelector((state: RootState) => state.editPost.value)
 
     const postLoadingRef = useRef<HTMLDivElement>(null)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         handleLoadPost()
     }, [])
 
     useEffect(() => {
-        if(editPost){
-            setPostModal(true)
+        if(editPost.editPostData && !editPost.open){
+            handleUpdateNewPost(editPost.editPostData, editPost.action)
         }
     }, [editPost]);
 
@@ -59,34 +60,38 @@ const HomePage = () => {
                     setPosts([...posts, ...res.data.posts])
                     setPostCursor(res.data.nextCursor)
                 }
-                postLoadingRef!.current!.style.display = '0'
+                postLoadingRef!.current!.style.opacity = '0'
             })
         }
     }
 
-    const handleUpdateNewPost = (postData: postDef, isEdit: boolean) => {
-        setEditPost(undefined)
+    const handleUpdateNewPost = (postData: postDef, action?: POST_MODAL_ACTION) => {
         setPosts((prevPosts) => {
             let updatedPosts = prevPosts;
-            if (isEdit) {
+            if (action == POST_MODAL_ACTION.EDIT) {
                 updatedPosts = prevPosts.filter(post => post._id !== postData._id);
             }
             return [postData, ...updatedPosts];
         });
+        dispatch(clearEditPost())
     }
 
     const handleRemovePost = (postId: string) => {
         setPosts(posts.filter(post => post._id!== postId))
     }
 
-    const handleEditPost = (post: postDef) => {
-        setEditPost({...post})
+    const handleNewPost = () => {
+        dispatch(setEditPost({
+            open: true,
+            editPostData: undefined,
+            action: POST_MODAL_ACTION.CREATE,
+        }))
     }
 
-    return <MainLayout initPostData={editPost} isPostModalOpen={postModal} setPostModalOpen={(state) => setPostModal(state)} setPostData={(postData: postDef, isEdit: boolean) => handleUpdateNewPost(postData, isEdit)}>
+    return <MainLayout>
         <div className='h-full flex flex-1 justify-center'>
             <div className='min-w-[640px] w-[80%] my-6 overflow-y-auto no-scrollbar'>
-                <div className='w-full h-[84px] rounded-xl px-4 flex items-center mb-3 bg-[#181818] cursor-pointer' onClick={() => setPostModal(true)}>
+                <div className='w-full h-[84px] rounded-xl px-4 flex items-center mb-3 bg-[#181818] cursor-pointer' onClick={handleNewPost}>
                     <Avatar className='cursor-pointer mr-3'>
                         <AvatarImage className='bg-white' src={userData?.avatar} alt='avatar'/>
                         <AvatarFallback delayMs={600}>?</AvatarFallback>
@@ -95,7 +100,7 @@ const HomePage = () => {
                         {t("placeholder:what_you_think", { name: userData?.displayName })}
                     </div>
                 </div>
-                {posts?.map((post, index) => <Post key={index} data={post} userData={userData!} onRemovePost={handleRemovePost} onEditPost={handleEditPost}/>)}
+                {posts?.map((post, index) => <Post key={index} data={post} userData={userData!} onRemovePost={handleRemovePost}/>)}
                 <div className='w-full h-10 flex justify-center items-center' ref={postLoadingRef}>
                     <div className='h-10 w-10'>
                         <Lottie animationData={LoadingAnimation}/>

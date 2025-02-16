@@ -14,7 +14,7 @@ const useAuth = () => {
 
     const {accessToken, refreshToken, loginType, isNewUser} = useSelector((state: RootState) => state.auth.value)
 
-    const dispath = useDispatch()
+    const dispatch = useDispatch()
 
     const getAuthDataFromGG = async () => {
         const data = await signInGG()
@@ -23,14 +23,14 @@ const useAuth = () => {
             const loginRes = await axios.post(AUTH_URL.LOGIN_GOOGLE_URL, {
                 accessToken
             })
-            dispath(setAuthData({
+            dispatch(setAuthData({
                 email: data.user!.email as string,
                 accessToken: loginRes.data.accessToken,
                 refreshToken: loginRes.data.refreshToken,
                 loginType: LOGIN_TYPE.GOOGLE,
             }))
             const userDataRes = await axios.get(PROFILE_URL.GET_PROFILE_URL)
-            dispath(setUserInfo(userDataRes.data))
+            dispatch(setUserInfo(userDataRes.data))
             return loginRes.status == 200;
         }
     }
@@ -39,14 +39,14 @@ const useAuth = () => {
         if (loginType === LOGIN_TYPE.EMAIL) {
             const res = await axios.post(AUTH_URL.LOGIN_URL, loginData)
             if(res.status == 200) {
-                dispath(setAuthData({
+                dispatch(setAuthData({
                     email: loginData!.email,
                     accessToken: res.data.accessToken,
                     refreshToken: res.data.refreshToken,
                     loginType: LOGIN_TYPE.EMAIL,
                 }))
                 const userDataRes = await axios.get(PROFILE_URL.GET_PROFILE_URL)
-                dispath(setUserInfo(userDataRes.data))
+                dispatch(setUserInfo(userDataRes.data))
             }
             return res.status == 200
         } else if (loginType === LOGIN_TYPE.GOOGLE) {
@@ -72,7 +72,7 @@ const useAuth = () => {
             await signOutGG();
         }
         await AsyncStorage.removeItem("auth")
-        dispath(clearAuthData())
+        dispatch(clearAuthData())
         socket.disconnect()
     }
 

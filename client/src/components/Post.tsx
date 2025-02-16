@@ -5,7 +5,11 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger, HoverCard, HoverCardContent, HoverCardTrigger, Separator
+    DropdownMenuTrigger,
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+    Separator
 } from "@/components/ui";
 import {commentDef, postDef} from "@/constants/types/post.ts";
 import {
@@ -21,7 +25,7 @@ import {
 } from 'lucide-react'
 import {SendInput, Swiper} from "@/components/index.ts";
 import axios from 'axios'
-import { useState, useEffect } from 'react'
+import {useEffect, useState} from 'react'
 import {FRIEND_URL, POST_URL} from "@/constants/api";
 import {timeSince} from "@/utils/convert";
 import {t} from "i18next";
@@ -29,17 +33,18 @@ import Modal from "@/components/Modal";
 import CommentSection from "@/components/CommentSection";
 import {userDataDef} from "@/constants/types/auth";
 import {useToast} from "@/hooks/use-toast";
+import {useDispatch} from "react-redux";
+import {POST_MODAL_ACTION, setEditPost} from "@/redux/reducers/editPostReducer";
 
 type postProps = {
     data: postDef,
     userData: userDataDef,
     onRemovePost: (postId: string) => void,
-    onEditPost: (post: postDef) => void
 }
 
 const Post = (props: postProps) => {
 
-    const { data, userData, onRemovePost, onEditPost } = props
+    const { data, userData, onRemovePost } = props
     const [likeQuantity, setLikeQuantity]  = useState<number>(data.likes)
     const [commentQuantity, setCommentQuantity] = useState<number>(data.comments)
     const [shareQuantity, setShareQuantity] = useState<number>(data.shares)
@@ -51,6 +56,7 @@ const Post = (props: postProps) => {
     const [replyContent, setReplyContent] = useState<string>('')
 
     const { toast } = useToast()
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if(!commentModal){
@@ -101,15 +107,18 @@ const Post = (props: postProps) => {
         axios.post(POST_URL.SHARE_POST_URL, {
             postId: data._id
         }).then(res => {
-            if(res.status === 200){
-                console.log(res);
-                if(isShare){
-                    setIsShare(false)
-                    setShareQuantity(shareQuantity - 1)
-                }else{
+            if(res.status == 200){
+                if(!isShare){
                     setIsShare(true)
                     setShareQuantity(shareQuantity + 1)
+                    toast({
+                        title: t("toast:share_post_success"),
+                    })
                 }
+            }else{
+                toast({
+                    title: t("toast:share_post_fail"),
+                })
             }
         })
     }
@@ -175,6 +184,14 @@ const Post = (props: postProps) => {
         })
     }
 
+    const handleEditPost = () => {
+        dispatch(setEditPost({
+            open: true,
+            editPostData: data,
+            action: POST_MODAL_ACTION.EDIT
+        }))
+    }
+
     return (
         <div className='flex-col w-full rounded-xl px-4 flex items-center mb-3 bg-[#181818] text-white'>
             <div className=' w-full h-[72px] flex justify-between items-center'>
@@ -222,7 +239,7 @@ const Post = (props: postProps) => {
                             <EyeOff className='group-hover:text-black text-white' size={24}/>
                             <p>{t("button:hide_post")}</p>
                         </DropdownMenuItem>}
-                        {data.createdBy._id == userData._id && <DropdownMenuItem className='group hover:bg-gray-300 hover:text-black cursor-pointer' onClick={() => onEditPost(data)}>
+                        {data.createdBy._id == userData._id && <DropdownMenuItem className='group hover:bg-gray-300 hover:text-black cursor-pointer' onClick={handleEditPost}>
                             <PencilLine className='group-hover:text-black text-white' size={24}/>
                             <p>{t("button:edit_post")}</p>
                         </DropdownMenuItem>}
@@ -249,7 +266,7 @@ const Post = (props: postProps) => {
                 <button type='button' onClick={handleShare} disabled={data.createdBy._id == userData._id}
                         className='flex p-2 my-2 mr-3 cursor-pointer rounded-xl transition hover:bg-[rgba(255,255,255,.3)]'>
                     <SquareArrowOutUpRight size={24} color={isShare ? 'red' : 'white'}/>
-                    <p className='ml-2'>{data.shares}</p>
+                    <p className='ml-2'>{shareQuantity}</p>
                 </button>
             </div>
             <Modal open={commentModal} onClose={() => setCommentModal(false)} width={640} height={640}

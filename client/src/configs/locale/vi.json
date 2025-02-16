@@ -9,7 +9,8 @@
     "friend_status_list": "Danh sách đoạn chat",
     "chat_list": "Danh sách tin nhắn",
     "notifications": "Danh sách thông báo",
-    "edit_post": "Chỉnh sửa bài viết"
+    "edit_post": "Chỉnh sửa bài viết",
+    "edit_profile": "Chỉnh sửa trang cá nhân"
   },
   "label": {
     "show_x_comments": "Xem tất cả {{x}} phản hồi",
@@ -35,7 +36,8 @@
     "other": "Khác",
     "online": "Đang hoạt động",
     "offline": "Không hoạt động",
-    "mutual_friend": "Bạn chung"
+    "mutual_friend": "Bạn chung",
+    "biography": "Tiểu sử"
   },
   "button": {
     "sign_in": "Đăng nhập",
@@ -46,9 +48,9 @@
     "complete": "Hoàn thành",
     "upload": "Tải lên",
     "response": "Phản hồi",
-    "hide_post": "Ẩn bài viết",
-    "delete_post": "Xóa bài viết",
-    "edit_post": "Chỉnh sửa bài viết",
+    "hide_post": "Ẩn bài đăng",
+    "delete_post": "Xóa bài đăng",
+    "edit_post": "Chỉnh sửa bài đăng",
     "friend_request": "Lời mời kết bạn",
     "friend_list": "Danh sách bạn bè",
     "confirm": "Xác nhận",
@@ -58,7 +60,11 @@
     "setting": "Cài đặt",
     "profile": "Trang cá nhân",
     "edit": "Chỉnh sửa",
-    "collapse": "Thu gọn"
+    "collapse": "Thu gọn",
+    "my_post": "Bài đăng",
+    "repost": "Đăng lại",
+    "hidden_post": "Bài đăng ẩn",
+    "save": "Lưu"
   },
   "error": {
     "incorrect_password": "Sai mật khẩu",
@@ -100,10 +106,12 @@
     "req_fail": "Xãy ra lỗi! Xin vui lòng thử lại",
     "send_friend_req_success": "Gửi lời mời kết bạn thành công",
     "send_friend_req_fail": "Gửi lời mời kết bạn thất bại",
-    "hide_post_success": "Ẩn bài viết thành công",
-    "hide_post_fail": "Ẩn bài viết thất bại",
-    "delete_post_success": "Xóa bài viết thành công",
-    "delete_post_fail": "Xóa bài viết thất bại"
+    "hide_post_success": "Ẩn bài đăng thành công",
+    "hide_post_fail": "Ẩn bài đăng thất bại",
+    "delete_post_success": "Xóa bài đăng thành công",
+    "delete_post_fail": "Xóa bài đăng thất bại",
+    "share_post_success": "Chia sẻ bài đăng thành công",
+    "share_post_fail": "Chia sẻ bài đăng thất bại"
   },
   "placeholder": {
     "optional": "Tùy chọn",

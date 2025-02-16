@@ -17,9 +17,9 @@ const Modal = (props: modalProps) => {
 
     const { open, onClose, children, width, height, showHeader = true, title, showBottom = true, style, renderBottom } = props;
 
-    return <div className='fixed inset-0 z-[996] items-center justify-center' style={{ display: open ? "flex": 'none' }}>
-        <div className='absolute inset-0 z-[997] bg-black opacity-60' onClick={() => onClose()}/>
-        <div className='absolute z-[998] flex flex-col bg-white shadow-white rounded-xl' style={{ width: `${width}px`, height: `${height}px`, ...style  }}>
+    return <div className='fixed inset-0 z-[896] items-center justify-center' style={{ display: open ? "flex": 'none' }}>
+        <div className='absolute inset-0 z-[897] bg-black opacity-60' onClick={() => onClose()}/>
+        <div className='absolute z-[898] flex flex-col bg-white shadow-white rounded-xl' style={{ width: `${width}px`, height: `${height}px`, ...style  }}>
             {showHeader && <div className='h-16 relative flex justify-center items-center px-6 border-b-[1px]'>
                 {title && <h2 className='justify-self-center font-bold text-xl'>{title}</h2>}
                 <div className='h-6 w-6 flex justify-center items-center absolute right-3 cursor-pointer' onClick={() => onClose()}>

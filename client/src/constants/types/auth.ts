@@ -24,4 +24,4 @@ export type signUpDef = signInDef & {
     confirmPassword: string;
 }
 
-export type userDataDef = userInfoDef & { avatar: string, _id: string, accessToken: string, isOnline: boolean, mutualFriends: number, }
+export type userDataDef = userInfoDef & { avatar: string, _id: string, accessToken: string, isOnline: boolean, mutualFriends: number, username: string, dob: string, tel: string, bio: string }
