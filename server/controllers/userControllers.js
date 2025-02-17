@@ -158,9 +158,9 @@ userControllers.unfriend = async (req, res) => {
 userControllers.searchUser = async (req, res) => {
   try {
     const userId = req.user;
-    const { username, tag } = req.body;
+    const { username, tag, cursor, limit } = req.query;
 
-    return await userServices.handleSearchUser(userId, username, tag, res);
+    return await userServices.handleSearchUser(userId, username, tag, cursor, limit, res);
   } catch (error) {
     return sendResponse({
       res,
