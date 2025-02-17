@@ -3,7 +3,9 @@
     "sign_in": "Đăng nhập",
     "sign_up": "Đăng ký",
     "forgot_password": "Quên mật khẩu",
+    "reset_password": "Đặt lại mật khẩu",
     "enter_otp": "Nhập OTP",
+    "enter_email": "Nhập Email",
     "new_post": "Tạo bài viết",
     "post_of": "Bài viết của {{username}}",
     "friend_status_list": "Danh sách đoạn chat",
@@ -18,6 +20,7 @@
     "sign_in": "Đăng nhập",
     "sign_up": "Đăng ký",
     "password": "Mật khẩu",
+    "new_password": "Mật khẩu mới",
     "or": "Hoặc",
     "forgot_password": "Quên mật khẩu",
     "dont_have_account": "Bạn chưa có tài khoản",
@@ -111,7 +114,9 @@
     "delete_post_success": "Xóa bài đăng thành công",
     "delete_post_fail": "Xóa bài đăng thất bại",
     "share_post_success": "Chia sẻ bài đăng thành công",
-    "share_post_fail": "Chia sẻ bài đăng thất bại"
+    "share_post_fail": "Chia sẻ bài đăng thất bại",
+    "forget_password_success": "OTP đã được gửi đến email của bạn",
+    "reset_password_success": "Đặt lại mật khẩu thành công"
   },
   "placeholder": {
     "optional": "Tùy chọn",
