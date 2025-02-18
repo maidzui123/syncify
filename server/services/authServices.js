@@ -303,7 +303,7 @@ const handleLogin = async (email, password, res) => {
         errorCode: ERROR.ACCESS_DENIED,
       });
     }
-    
+
     const isPasswordValid = await verifyPassword(password, user.password);
 
     if (!isPasswordValid) {
@@ -384,8 +384,8 @@ const handleRefreshToken = async (refreshToken, res) => {
     return sendResponse({
       res,
       status: 400,
-      message: "Refresh token is required",
-      errorCode: ERROR.RT_REQUIRED,
+      message: "Unauthorized",
+      errorCode: ERROR.UNAUTHORIZED,
     });
   }
 
@@ -497,7 +497,7 @@ const handleResetPassword = async (userId, password, res) => {
         errorCode: ERROR.ACCESS_DENIED,
       });
     }
-    
+
     const isPasswordSame = await verifyPassword(password, checkUser.password);
 
     if (isPasswordSame) {

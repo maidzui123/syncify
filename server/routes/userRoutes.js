@@ -46,7 +46,7 @@ router.post(
 router.post("/api/users/unfriend", authentication, userControllers.unfriend);
 
 // Search User
-router.post("/api/users/search", authentication, userControllers.searchUser);
+router.get("/api/users/search", authentication, userControllers.searchUser);
 
 /**
  * @swagger
@@ -271,25 +271,38 @@ router.post("/api/users/search", authentication, userControllers.searchUser);
  *         description: Thành công
  *
  * /api/users/search:
- *   post:
+ *   get:
  *     summary: Tìm kiếm người dùng
  *     tags:
  *       - User
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *                 example: "John"
- *               tag:
- *                 type: string
- *                 example: "1234"
+ *     parameters:
+ *       - name: username
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Tên người dùng
+ *       - name: tag
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Tag người dùng
+ *       - name: cursor
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Con trỏ để phân trang
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Số lượng bản ghi trả về
  *     responses:
  *       200:
  *         description: Thành công

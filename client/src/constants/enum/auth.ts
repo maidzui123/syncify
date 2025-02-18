@@ -13,5 +13,6 @@ export enum AUTH_SCREEN {
   OTP = 1,
   INFO = 2,
   EMAIL = 3,
-  RESET_PASS = 4,
+  FORGET_PASS = 4,
+  RESET_PASS = 5,
 }

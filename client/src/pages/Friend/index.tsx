@@ -79,7 +79,7 @@ const FriendItem = (props: friendItemProps) => {
     }
 
     return <div className='h-fit rounded-lg overflow-hidden border border-gray-500 cursor-pointer'>
-        <img className='w-full bg-white object-fill' src={userData.avatar ?? Resources.avatar.default} alt='' onError={(e) => {
+        <img className='w-full bg-white object-fill aspect-square' src={userData.avatar ?? Resources.avatar.default} alt='' onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = Resources.avatar.default;
         }}/>

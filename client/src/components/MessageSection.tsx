@@ -140,7 +140,7 @@ const MessageSection = (props: messageSectionProps) => {
                 return <MessageItem key={index} isSender={messageItem.isSender} content={messageItem.content} position={messagePosition.FIRST}/>
             })}
         </div>
-        <SendInput avatar={userData.avatar} value={sendMessage} onChange={(value) => setSendMessage(value)} onSend={handleSendMessage}/>
+        <SendInput avatar={userData?.avatar} value={sendMessage} onChange={(value) => setSendMessage(value)} onSend={handleSendMessage}/>
     </div>
 }
 

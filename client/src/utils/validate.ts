@@ -26,6 +26,28 @@ export const signUpSchema = signInSchema.shape({
         .oneOf([ref('password')], i18n.t('error:confirm_password_incorrect'))
 })
 
+export const forgetPasswordSchema = object({
+    email: string()
+        .required(i18n.t("error:require_email"))
+        .email(i18n.t("error:invalid_email"))
+})
+
+export const resetPasswordSchema = object({
+    password: string()
+        .required(i18n.t("error:require_password"))
+        .min(8, i18n.t("error:password_at_least_8"))
+        .matches(/[A-Z]/, i18n.t('error:password_at_least_1_upcase'))
+        .matches(/[1-9]/, i18n.t('error:password_at_least_1_number'))
+        .matches(/[@#$%^&*!.]/, i18n.t('error:password_at_least_1_special_characters')),
+    confirmPassword: string()
+        .required(i18n.t("error:require_confirm_password"))
+        .min(8, i18n.t("error:password_at_least_8"))
+        .matches(/[A-Z]/, i18n.t('error:password_at_least_1_upcase'))
+        .matches(/[1-9]/, i18n.t('error:password_at_least_1_number'))
+        .matches(/[@#$%^&*!.]/, i18n.t('error:password_at_least_1_special_characters'))
+        .oneOf([ref('password')], i18n.t('error:confirm_password_incorrect'))
+})
+
 export const userInfoSchema = object({
     displayName: string().required(i18n.t("error:require_display_name")).max(50),
     tag: string().max(4),
@@ -36,7 +58,6 @@ export const userInfoSchema = object({
     country: string().required(i18n.t("error:require_country")),
     tel: string().required(i18n.t("error:require_tel")).matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, i18n.t("error:require_tel")),
 })
-
 export type signInDef = InferType<typeof signInSchema>
 export type signUpDef = InferType<typeof signUpSchema>
 export type userInfoDef = InferType<typeof userInfoSchema>

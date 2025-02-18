@@ -585,9 +585,10 @@ const handleUnfriend = async (userId, friendId, res) => {
   }
 };
 
-const handleSearchUser = async (userId, username, tag, res) => {
+const handleSearchUser = async (userId, username, tag, cursor, limit, res) => {
   try {
     const checkUser = await User.findById(userId);
+
     if (!checkUser || checkUser.isBanned) {
       return sendResponse({
         res,
@@ -597,20 +598,63 @@ const handleSearchUser = async (userId, username, tag, res) => {
       });
     }
 
-    const searchUser = await User.findOne({ username, tag }).select(
-      "email displayName avatar tag isOnline"
-    );
+    const matchQuery = {
+      _id: { $ne: checkUser._id },
+      isBanned: false,
+      isAdmin: false,
+    };
 
-    if (!searchUser || searchUser.isBanned) {
-      return sendResponse({
-        res,
-        status: 404,
-        message: "User not found",
-        errorCode: ERROR.USER_NOT_FOUND,
-      });
+    if (username) {
+      matchQuery.username = { $regex: username, $options: "i" };
     }
 
-    return sendResponse({ res, status: 200, data: searchUser });
+    if (tag) {
+      matchQuery.tag = { $regex: tag, $options: "i" };
+    }
+
+    if (cursor) {
+      matchQuery._id = { $gt: cursor };
+    }
+
+    const users = await User.aggregate([
+      { $match: matchQuery },
+      {
+        $addFields: {
+          mutualFriends: {
+            $size: {
+              $setIntersection: ["$friends", checkUser.friends],
+            },
+          },
+          isFriend: { $in: ["$_id", checkUser.friends] },
+        },
+      },
+      // Chỉ chọn các trường cần thiết
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          displayName: 1,
+          tag: 1,
+          mutualFriends: 1,
+          isFriend: 1,
+          avatar: 1, 
+          bio: 1,
+        },
+      },
+      { $sort: { isFriend: -1, mutualFriends: -1, _id: 1 } },
+      { $limit: Number(limit) },
+    ]);
+
+    const nextCursor =
+      users.length == limit ? users[users.length - 1]._id : null;
+    return sendResponse({
+      res,
+      status: 200,
+      data: {
+        users,
+        nextCursor,
+      },
+    });
   } catch (error) {
     return sendResponse({
       res,
