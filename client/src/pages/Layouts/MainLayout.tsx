@@ -106,7 +106,7 @@ const MainLayout = (props: mainLayoutProps) => {
                     <TooltipTrigger asChild>
                         <button style={{backgroundColor: activeTab == 3 ? "rgba(255,255,255,.3)" : 'transparent'}}
                                 className='p-2 my-3 cursor-pointer rounded-lg transition hover:bg-[rgba(255,255,255,.3)]'
-                                onClick={() => navigate('/profile')}>
+                                onClick={() => navigate('/notifications')}>
                             <Bell color='#ffffff' size={32}/>
                         </button>
                     </TooltipTrigger>

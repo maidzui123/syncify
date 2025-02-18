@@ -10,13 +10,16 @@ import {
     SelectValue
 } from "@/components/ui";
 import {Modal} from "@/components/index.ts";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store.ts";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {monthsEnglish, monthsVietnamese} from "@/constants/datetime";
 import dayjs from "dayjs";
 import axios from "axios";
-import {PROFILE_URL} from "@/constants/api";
+import {MEDIA_URL, PROFILE_URL} from "@/constants/api";
+import {useToast} from "@/hooks/use-toast";
+import {setUserInfo} from "@/redux/reducers/authReducer";
+import {convertBlobToFile} from "@/utils/convert";
 
 type editProfileModalProps = {
     open: boolean;
@@ -32,7 +35,13 @@ const EditProfileModal = (props: editProfileModalProps) => {
     const [date, setDate] = useState<string>(userData?.date ?? "")
     const [month, setMonth] = useState<string>(userData?.month ?? "")
     const [year, setYear] = useState<string>(userData?.year ?? "")
-    const [bio, setBio] = useState(userData?.bio ?? "")
+    const [bio, setBio] = useState<string>(userData?.bio ?? "")
+    const [cldLink, setCldLink] = useState<string>(userData?.avatar ?? "")
+
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const { toast } = useToast()
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if(userData){
@@ -48,15 +57,52 @@ const EditProfileModal = (props: editProfileModalProps) => {
             dob: `${year}-${month}-${date}`,
             displayName,
             bio,
+            avatar: cldLink,
         }).then(res => {
-            console.log(res)
+            if(res.status == 200){
+                axios.get(PROFILE_URL.GET_PROFILE_URL).then(res => {
+                    if(res.status == 200){
+                        dispatch(setUserInfo(res.data))
+                    }
+                })
+                toast({
+                    title: t("toast:update_profile_success")
+                })
+                onClose()
+            }else{
+                toast({
+                    title: t("toast:update_profile_fail")
+                })
+            }
         })
     }
 
+    const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        if(e.target.files){
+            const url = URL.createObjectURL(e.target.files[0])
+            const result = await fetch(url);
+            const blob = await result.blob();
+            const imageFile = convertBlobToFile(blob)
+            const formData = new FormData();
+            formData.append("file", imageFile);
+            formData.append("type", "image")
+            formData.append("folderName", 'avatar')
+            axios.post(MEDIA_URL.UPDATE_MEDIA_URL, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(res => {
+                setCldLink(res.data.url)
+            }, err => {
+                console.error(err)
+            })
+        }
+    };
+
     return <Modal height={620} width={720} open={open} onClose={onClose} showHeader title={t("title:edit_profile")} showBottom style={{ backgroundColor: '#181818', color: 'white' }} renderBottom={() => <Button className='bg-blue-500 text-white' onClick={handleUpdateProfile}>{t("button:save")}</Button>}>
         <div className='flex flex-col items-center w-full'>
-            <Avatar className='cursor-pointer h-32 w-32'>
-                <AvatarImage className='bg-white' src={userData?.avatar} alt='avatar'/>
+            <Avatar className='cursor-pointer h-32 w-32' onClick={() => fileInputRef.current!.click()}>
+                <AvatarImage className='bg-white' src={cldLink} alt='avatar'/>
                 <AvatarFallback delayMs={600}>?</AvatarFallback>
             </Avatar>
             <div className='w-full grid gap-4 grid-cols-3 grid-rows-3 mt-3 items-end'>
@@ -108,6 +154,7 @@ const EditProfileModal = (props: editProfileModalProps) => {
                 </div>
             </div>
         </div>
+        <input className='hidden' ref={fileInputRef} type='file' accept="image/*" onChange={handleImageChange}/>
     </Modal>
 }
 

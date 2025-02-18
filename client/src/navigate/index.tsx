@@ -6,6 +6,7 @@ import ChatPage from "@/pages/Chat";
 import NotificationPage from "@/pages/Notification";
 import FriendPage from "@/pages/Friend";
 import ProfilePage from "@/pages/profile";
+import SearchPage from "@/pages/Search";
 
 const anonymousRoute = [
   {
@@ -40,7 +41,12 @@ const authRoute = [
     key: '5',
     path: "/profile",
     element: <ProfilePage/>,
-  }
+  },
+  {
+    key: '6',
+    path: "/search",
+    element: <SearchPage/>,
+  },
 ];
 
 const NavigateContainer = () => {

@@ -111,7 +111,9 @@
     "delete_post_success": "Xóa bài đăng thành công",
     "delete_post_fail": "Xóa bài đăng thất bại",
     "share_post_success": "Chia sẻ bài đăng thành công",
-    "share_post_fail": "Chia sẻ bài đăng thất bại"
+    "share_post_fail": "Chia sẻ bài đăng thất bại",
+    "update_profile_success": "Chỉnh sửa trang cá nhân thành công",
+    "update_profile_fail": "Chỉnh sửa trang cá nhân thất bại"
   },
   "placeholder": {
     "optional": "Tùy chọn",

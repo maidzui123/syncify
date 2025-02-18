@@ -143,10 +143,10 @@ const ProfilePage = () => {
                     {userData?.bio && <p className='w-full p-6'>{userData?.bio}</p>}
                     <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:edit")}</button>
                     <div className='flex w-full mt-2'>
-                        <button className='flex flex-1 justify-center items-center text-xl font-medium' type='button' style={{ color: profileTab == 0 ? '#ffffff' : '#777777', borderBottom: profileTab == 0 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(0)}>
+                        <button className='flex flex-1 justify-center items-center text-lg font-medium py-2' type='button' style={{ color: profileTab == 0 ? '#ffffff' : '#777777', borderBottom: profileTab == 0 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(0)}>
                             {t("button:my_post")}
                         </button>
-                        <button className='flex flex-1 justify-center items-center text-xl font-medium' type='button' style={{ color: profileTab == 1 ? '#ffffff' : '#777777', borderBottom: profileTab == 1 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(1)}>
+                        <button className='flex flex-1 justify-center items-center text-lg font-medium py-2' type='button' style={{ color: profileTab == 1 ? '#ffffff' : '#777777', borderBottom: profileTab == 1 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(1)}>
                             {t("button:repost")}
                         </button>
                     </div>
