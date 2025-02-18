@@ -2,12 +2,32 @@ import {MainLayout} from "@/pages";
 import {ContactList} from "@/components";
 import {Hash, Search} from "lucide-react";
 import {Input} from "@/components/ui";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import { debounce } from "lodash";
+import axios from "axios";
+import {FRIEND_URL} from "@/constants/api.ts";
 
 const SearchPage = () => {
 
     const [keyword, setKeyword] = useState<string>('')
     const [tag, setTag] = useState<string>('')
+
+    useEffect(() => {
+        if(keyword || tag){
+            handleSearch(keyword, tag)
+        }
+        return () => handleSearch.cancel();
+    }, [keyword, tag]);
+
+    const handleSearch = debounce((username: string, tag: string) => {
+        axios.post(FRIEND_URL.SEARCH_USER_URL, {
+            username: username,
+            tag: tag,
+        }).then(res => {
+            if(res.status == 200){}
+            console.log(res.data)
+        })
+    }, 500)
 
     return <MainLayout>
         <div className='h-full flex flex-1 justify-center text-white'>
@@ -27,6 +47,7 @@ const SearchPage = () => {
                             <Input style={{ boxShadow: 'none' }} className='flex-1 border-0 shadow-transparent' value={tag} onChange={(e) => setTag(e.target.value)}/>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

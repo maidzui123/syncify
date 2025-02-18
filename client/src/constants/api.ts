@@ -54,5 +54,6 @@ export const FRIEND_URL = {
     REJECT_FRIEND_URL: '/api/users/friends/request/reject',
     // SEARCH_FRIEND_URL: '/api/users/search',
     UNFRIEND_URL: '/api/users/unfriend',
-    SEND_FRIEND_REQUEST: '/api/users/friends/request'
+    SEND_FRIEND_REQUEST: '/api/users/friends/request',
+    SEARCH_USER_URL: '/api/users/search'
 }
