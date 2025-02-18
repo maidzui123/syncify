@@ -82,7 +82,7 @@ const handleGetTotalPosts = async (userId, res) => {
       });
     }
 
-    const totalPosts = await Post.countDocuments();
+    const totalPosts = await Post.countDocuments({ isDeleted: false });
 
     return sendResponse({
       res,
