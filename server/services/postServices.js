@@ -754,7 +754,7 @@ const handleUpdateReply = async (
   }
 };
 
-const handleGetUserListPosts = async (userId, cursor, limit, res) => {
+const handleGetMyListPosts = async (userId, cursor, limit, res) => {
   try {
     const checkUser = await User.findById(userId);
 
@@ -773,6 +773,74 @@ const handleGetUserListPosts = async (userId, cursor, limit, res) => {
       query["_id"] = { $lt: cursor };
     }
     const posts = await Post.find(query)
+      .populate({
+        path: "createdBy",
+        select: "displayName avatar",
+      })
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const processedPosts = posts.map((post) => ({
+      ...post,
+      likes: post.likes.length,
+      shares: post.shares.length,
+      comments: post.comments.length,
+      isLiked: post.likes.some((like) => like.toString() === userId),
+      isShared: post.shares.some((like) => like.toString() === userId),
+    }));
+
+    const nextCursor =
+      posts.length == limit ? posts[posts.length - 1]._id : null;
+
+    return sendResponse({
+      res,
+      status: 200,
+      data: {
+        posts: processedPosts,
+        nextCursor,
+      },
+    });
+  } catch (error) {
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
+  }
+};
+
+const handleGetUserListPosts = async (userId, currentUserId, cursor, limit, res) => {
+  try {
+    const checkUser = await User.findById(userId);
+
+    if (!checkUser || checkUser.isBanned) {
+      return sendResponse({
+        res,
+        status: 401,
+        message: "Access Denied",
+        errorCode: ERROR.ACCESS_DENIED,
+      });
+    }
+
+    const checkCurrentUser = await User.findById(currentUserId);
+
+    if (!checkCurrentUser || checkCurrentUser.isBanned) {
+      return sendResponse({
+        res,
+        status: 404,
+        message: "User not found",
+        errorCode: ERROR.USER_NOT_FOUND,
+      });
+    }
+    
+    const query = { createdBy: currentUserId, isDeleted: false, isArchived: false, privacy: "public" };
+
+    if (cursor) {
+      query["_id"] = { $lt: cursor };
+    }
+    const posts = await Post.find(query).select("-__v -reports -isDeleted -isArchived")
       .populate({
         path: "createdBy",
         select: "displayName avatar",
@@ -1372,6 +1440,7 @@ export {
   handleUpdatePost,
   handleUpdateComment,
   handleUpdateReply,
+  handleGetMyListPosts,
   handleGetUserListPosts,
   handleGetUserListArchivedPosts,
   handleGetAllPosts,

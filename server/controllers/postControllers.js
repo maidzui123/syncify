@@ -268,13 +268,13 @@ postControllers.updateReply = async (req, res) => {
   }
 };
 
-// User's List Posts
-postControllers.getUserListPosts = async (req, res) => {
+// My List Posts
+postControllers.getMyListPosts = async (req, res) => {
   try {
     const userId = req.user;
     const cursor = req.query.cursor;
     const limit = req.query.limit || 10;
-    return await postServices.handleGetUserListPosts(
+    return await postServices.handleGetMyListPosts(
       userId,
       cursor,
       limit,
@@ -290,6 +290,29 @@ postControllers.getUserListPosts = async (req, res) => {
   }
 };
 
+// User's List Posts
+postControllers.getUserListPosts = async (req, res) => {
+  try {
+    const userId = req.user;
+    const currentUserId = req.params.userId;
+    const cursor = req.query.cursor;
+    const limit = req.query.limit || 10;
+    return await postServices.handleGetUserListPosts(
+      userId,
+      currentUserId,
+      cursor,
+      limit,
+      res
+    );
+  } catch (error) {
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
+  }
+};
 // User's List Archived Posts
 postControllers.getUserListArchivedPosts = async (req, res) => {
   try {

@@ -52,9 +52,15 @@ router.patch(
   postControllers.updateReply
 );
 
-//  User's List Posts
-router.get("/api/posts/me", authentication, postControllers.getUserListPosts);
+//  My List Posts
+router.get("/api/posts/me", authentication, postControllers.getMyListPosts);
 
+// User's List Posts
+router.get(
+  "/api/posts/:userId",
+  authentication,
+  postControllers.getUserListPosts
+);
 // User's List Archived Posts
 router.get(
   "/api/posts/archives",
