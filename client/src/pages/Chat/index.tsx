@@ -14,6 +14,7 @@ import {RootState} from "@/redux/store.ts";
 import useSocket, {socket} from "@/hooks/useSocket.ts";
 import {MainLayout} from "@/pages";
 
+
 const ChatPage = () => {
 
     const [chatCursor, setChatCursor] = useState<string>('')
@@ -21,6 +22,7 @@ const ChatPage = () => {
     const [selectedChat, setSelectedChat] = useState<userDataDef & { chatId: string }>()
 
     const userData = useSelector((state: RootState) => state.auth.value.user)
+    const locale = useSelector((state:RootState) => state.locale.value)
     const chatScrollRef = useRef<HTMLDivElement>(null)
 
     useSocket()

@@ -10,6 +10,7 @@ export const AUTH_URL = {
     LOGIN_GOOGLE_URL: '/api/google/login',
     SEND_OTP_FOR_RESET_PASS_URL: '/api/code/send',
     RESET_PASSWORD_URL: '/api/reset-password',
+    CHANGE_PASSWORD_URL: '/api/change-password'
 }
 
 export const PROFILE_URL = {
@@ -36,6 +37,8 @@ export const POST_URL = {
     DELETE_POST_URL: '/api/posts',
     EDIT_POST_URL: '/api/posts',
     GET_MY_SHARE_POST_URL: '/api/posts/sharing/me',
+    GET_OTHER_SHARE_POST_URL: '/api/posts/sharing',
+    GET_OTHER_POST_URL: '/api/posts'
 }
 
 export const CHAT_URL = {

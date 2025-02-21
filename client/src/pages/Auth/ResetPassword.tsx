@@ -1,16 +1,11 @@
-import { LOGIN_TYPE } from "@/constants/enum/auth.ts";
 import Lottie from "lottie-react";
 import Resources from "@/constants/resource.ts";
-import { Countdown, OTP } from "@/components";
 import { motion } from "motion/react";
 import { Button, Input } from "@/components/ui";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { AUTH_URL } from "@/constants/api.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store.ts";
-import { setAuthData } from "@/redux/reducers/authReducer";
+import { useDispatch} from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { setLoading } from "@/redux/reducers/loadingReducer";
 import { useForm, SubmitHandler } from "react-hook-form";

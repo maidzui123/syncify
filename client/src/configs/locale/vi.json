@@ -12,7 +12,8 @@
     "chat_list": "Danh sách tin nhắn",
     "notifications": "Danh sách thông báo",
     "edit_post": "Chỉnh sửa bài viết",
-    "edit_profile": "Chỉnh sửa trang cá nhân"
+    "edit_profile": "Chỉnh sửa trang cá nhân",
+    "change_pass": "Thay đổi mật khẩu"
   },
   "label": {
     "show_x_comments": "Xem tất cả {{x}} phản hồi",
@@ -40,7 +41,8 @@
     "online": "Đang hoạt động",
     "offline": "Không hoạt động",
     "mutual_friend": "Bạn chung",
-    "biography": "Tiểu sử"
+    "biography": "Tiểu sử",
+    "current_pass": "Mật khẩu hiện tại"
   },
   "button": {
     "sign_in": "Đăng nhập",
@@ -68,7 +70,9 @@
     "repost": "Đăng lại",
     "hidden_post": "Bài đăng ẩn",
     "save": "Lưu",
-    "add_friend": "Thêm bạn bè"
+    "add_friend": "Thêm bạn bè",
+    "change_pass": "Đổi mật khẩu",
+    "language": "Ngôn ngữ"
   },
   "error": {
     "incorrect_password": "Sai mật khẩu",
@@ -95,7 +99,8 @@
     "require_country": "Vui lòng chọn quốc gia",
     "require_tel": "Vui lòng nhập số điện thoại",
     "exceed_max_limit_image_upload": "Số lượng ảnh đăng tải vượt quá giới hạn",
-    "exceed_max_limit_video_upload": "Số lượng video đăng tải vượt quá giới hạn"
+    "exceed_max_limit_video_upload": "Số lượng video đăng tải vượt quá giới hạn",
+    "password_cannot_same": "Mật khẩu mới không được trùng mật khẩu cũ"
   },
   "toast": {
     "sign_in_success": "Đăng nhập thành công",

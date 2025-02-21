@@ -57,7 +57,7 @@ const NavigateContainer = () => {
       <Routes>
         {isAuth
           ? authRoute.map((item) => (
-              <Route key={item.key} path={item.path} element={item.element} />
+              <Route key={item.key} path={item.path} element={item.element}/>
             ))
           : anonymousRoute.map((item) => (
               <Route key={item.key} path={item.path} element={item.element} />

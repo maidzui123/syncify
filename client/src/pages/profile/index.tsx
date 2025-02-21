@@ -86,7 +86,7 @@ const ProfilePage = () => {
     const handleLoadPost = () => {
         if(postCursor != null){
             postLoadingRef!.current!.style.opacity = '1'
-            axios.get(POST_URL.GET_MY_POSTS_URL, {
+            axios.get(userId == 'me' ? POST_URL.GET_MY_POSTS_URL : POST_URL.GET_OTHER_POST_URL + `/${userId}`, {
                 params: {
                     cursor: postCursor,
                     limit: 10,
@@ -104,7 +104,7 @@ const ProfilePage = () => {
     const handleLoadSharePost = () => {
         if(shareCursor != null){
             sharePostLoadingRef!.current!.style.opacity = '1'
-            axios.get(POST_URL.GET_MY_SHARE_POST_URL, {
+            axios.get(userId == 'me' ? POST_URL.GET_MY_SHARE_POST_URL : POST_URL.GET_OTHER_SHARE_POST_URL + `/${userId}`, {
                 params: {
                     cursor: shareCursor,
                     limit: 10,
@@ -143,13 +143,29 @@ const ProfilePage = () => {
         })
     }
 
-    const handleSendFriendReq = (id: string) => {
+    const handleSendFriendReq = () => {
         axios.post(FRIEND_URL.SEND_FRIEND_REQUEST, {
-            friendId: id,
+            friendId: userId,
         }).then(res => {
             if(res.status == 200){
                 toast({
                     title: t('toast:accept_friend_success')
+                })
+            }else{
+                toast({
+                    title: t('toast:req_fail')
+                })
+            }
+        })
+    }
+
+    const handleUnfriend = () => {
+        axios.post(FRIEND_URL.UNFRIEND_URL, {
+            friendId: userId
+        }).then(res => {
+            if(res.status == 200){
+                toast({
+                    title: t('toast:unfriend_success')
                 })
             }else{
                 toast({
@@ -179,7 +195,8 @@ const ProfilePage = () => {
                     </div>
                     {personalDetail?.bio && <p className='w-full p-6'>{personalDetail?.bio}</p>}
                     {userId == 'me' && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:edit")}</button>}
-                    {userId != 'me' && isFriend && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:add_friend")}</button>}
+                    {userId != 'me' && isFriend && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={handleSendFriendReq}>{t("button:add_friend")}</button>}
+                    {userId != 'me' && !isFriend && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={handleUnfriend}>{t("button:unfriend")}</button>}
                     <div className='flex w-full mt-2'>
                         <button className='flex flex-1 justify-center items-center text-lg font-medium py-2' type='button' style={{ color: profileTab == 0 ? '#ffffff' : '#777777', borderBottom: profileTab == 0 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(0)}>
                             {t("button:my_post")}

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks";
 import { AUTH_SCREEN, LOGIN_TYPE, REGISTER_TYPE } from "@/constants/enum/auth";
 import { signInSchema, signUpSchema } from "@/utils/validate";
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Resources from "@/constants/resource";
 import { signInDef, signUpDef } from "@/constants/types/auth";
@@ -24,10 +24,11 @@ import { useToast } from "@/hooks/use-toast";
 import OTPForm from "@/pages/Auth/OTPForm";
 import ForgetPassword from "@/pages/Auth/ForgetPassword";
 import ResetPassword from "@/pages/Auth/ResetPassword";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { setAuthData } from "@/redux/reducers/authReducer";
 import NewUserInfo from "@/pages/Auth/NewUserInfo";
 import { setLoading } from "@/redux/reducers/loadingReducer";
+import {RootState} from "@/redux/store";
 // import {localeType, setLocale} from "@/redux/reducers/localeReducer";
 // import {RootState} from "@/redux/store";
 
@@ -265,7 +266,7 @@ const AuthPage = () => {
   const [formType, setFormType] = useState<string>("sign-in");
   const [isForgetPw, setIsForgetPw] = useState(false);
   const [newUserStep, setNewUserStep] = useState<AUTH_SCREEN>(AUTH_SCREEN.AUTH);
-  // const locale = useSelector((state: RootState) => state.locale.value)
+  const locale = useSelector((state: RootState) => state.locale.value)
   // const dispatch = useDispatch()
 
   // const handleChangeLocale = (locale: localeType) => {

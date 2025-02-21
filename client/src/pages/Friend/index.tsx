@@ -11,6 +11,8 @@ import {friendDef} from "@/constants/types/friend.ts";
 import Resources from "@/constants/resource.ts";
 import {useToast} from "@/hooks/use-toast.ts";
 import {ContactList} from "@/components";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store.ts";
 
 type friendItemProps = {
     friendReqId?: string;
@@ -24,6 +26,8 @@ type friendItemProps = {
 const FriendItem = (props: friendItemProps) => {
 
     const {userData, isFriendRequest, mutualFriends, friendReqId, onReqAction, onUnfriend} = props;
+
+    const locale = useSelector((state:RootState) => state.locale.value)
 
     const { toast } = useToast()
 

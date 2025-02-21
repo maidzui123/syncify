@@ -58,6 +58,27 @@ export const userInfoSchema = object({
     country: string().required(i18n.t("error:require_country")),
     tel: string().required(i18n.t("error:require_tel")).matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, i18n.t("error:require_tel")),
 })
+
+export const changePasswordSchema = object({
+    currentPassword: string()
+        .required(i18n.t("error:require_password"))
+        .min(8, i18n.t("error:password_at_least_8"))
+        .matches(/[A-Z]/, i18n.t('error:password_at_least_1_upcase'))
+        .matches(/[1-9]/, i18n.t('error:password_at_least_1_number'))
+        .matches(/[@#$%^&*!.]/, i18n.t('error:password_at_least_1_special_characters')),
+    newPassword: string()
+        .required(i18n.t("error:require_password"))
+        .min(8, i18n.t("error:password_at_least_8"))
+        .matches(/[A-Z]/, i18n.t('error:password_at_least_1_upcase'))
+        .matches(/[1-9]/, i18n.t('error:password_at_least_1_number'))
+        .matches(/[@#$%^&*!.]/, i18n.t('error:password_at_least_1_special_characters'))
+        .notOneOf([ref('currentPassword')], i18n.t('error:password_cannot_same')),
+    confirmPassword: string()
+        .required(i18n.t("error:require_confirm_password"))
+        .oneOf([ref('newPassword')], i18n.t('error:confirm_password_incorrect'))
+})
+
 export type signInDef = InferType<typeof signInSchema>
 export type signUpDef = InferType<typeof signUpSchema>
 export type userInfoDef = InferType<typeof userInfoSchema>
+export type changePasswordDef = InferType<typeof changePasswordSchema>

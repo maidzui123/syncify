@@ -35,6 +35,7 @@ import {userDataDef} from "@/constants/types/auth";
 import {useToast} from "@/hooks/use-toast";
 import {useDispatch} from "react-redux";
 import {POST_MODAL_ACTION, setEditPost} from "@/redux/reducers/editPostReducer";
+import {useNavigate} from "react-router";
 
 type postProps = {
     data: postDef,
@@ -57,6 +58,7 @@ const Post = (props: postProps) => {
 
     const { toast } = useToast()
     const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(!commentModal){
@@ -74,7 +76,7 @@ const Post = (props: postProps) => {
             }).then(res => {
                 if(res.status == 200){
                     setCommentCursor(res.data?.nextCursor ?? "");
-                    const newCommentData: commentDef[] = [...commentData, ...res.data?.processedComments];
+                    const newCommentData: commentDef[] = [...commentData, ...res.data.processedComments];
                     setCommentData(newCommentData)
                     setCommentModal(true)
                 }
@@ -212,7 +214,7 @@ const Post = (props: postProps) => {
                                 <p className='text-2xl font-bold flex-1'>{data?.createdBy.displayName}</p>
                             </div>
                             <div className='flex gap-x-3 text-base'>
-                                <button className='flex flex-1 gap-x-3 justify-center items-center bg-blue-500 rounded-lg p-2' type='button'>
+                                <button className='flex flex-1 gap-x-3 justify-center items-center bg-blue-500 rounded-lg p-2' type='button' onClick={() => navigate(`/profile/${data.createdBy._id}`)}>
                                     <ContactRound size={24} color='#ffffff'/>
                                     {t("button:profile")}
                                 </button>

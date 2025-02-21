@@ -94,5 +94,5 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuRadioGroup,
     Separator,
-    HoverCard, HoverCardTrigger, HoverCardContent,
+    HoverCard, HoverCardTrigger, HoverCardContent
 }

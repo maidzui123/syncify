@@ -15,7 +15,7 @@ import {Modal} from '@/components'
 import axios from 'axios';
 import { MEDIA_URL, PROFILE_URL} from "@/constants/api";
 import {convertBlobToFile} from "@/utils/convert";
-import {setNewUser} from "@/redux/reducers/authReducer";
+import {setNewUser, setUserInfo} from "@/redux/reducers/authReducer";
 import { useDispatch } from "react-redux";
 import {setLoading} from "@/redux/reducers/loadingReducer";
 
@@ -54,6 +54,7 @@ const NewUserInfo = (props: newUserInfoProps) => {
         }).then(res => {
             dispatch(setLoading(false))
             if(res.status == 200){
+                dispatch(setUserInfo(res.data))
                 dispatch(setNewUser(false))
             }
         })

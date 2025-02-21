@@ -9,6 +9,8 @@ import {MainLayout} from "@/pages";
 import {notiDef, targetUserDef} from "@/constants/types/notification.ts";
 import {timeSince} from "@/utils/convert.ts";
 import {ContactList} from "@/components";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store.ts";
 
 const NotificationPage = () => {
 
@@ -16,6 +18,7 @@ const NotificationPage = () => {
     const [notiCursor, setNotiCursor] = useState<string>('')
 
     const notiLoadingRef = useRef<HTMLDivElement>(null)
+    const locale = useSelector((state:RootState) => state.locale.value)
 
     useEffect(() => {
         handleGetNotifications()

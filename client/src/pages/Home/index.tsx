@@ -19,6 +19,7 @@ const HomePage = () => {
 
     const userData = useSelector((state: RootState) => state.auth.value.user)
     const editPost = useSelector((state: RootState) => state.editPost.value)
+    const locale = useSelector((state:RootState) => state.locale.value)
 
     const postLoadingRef = useRef<HTMLDivElement>(null)
     const dispatch = useDispatch()
