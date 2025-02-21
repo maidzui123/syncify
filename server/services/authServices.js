@@ -526,6 +526,65 @@ const handleResetPassword = async (userId, password, res) => {
   }
 };
 
+const handleChangePassword = async (userId, oldPassword, newPassword, res) => {
+  try {
+    const checkUser = await User.findById(userId);
+
+    if (!checkUser || checkUser.isBanned) {
+      return sendResponse({
+        res,
+        status: 401,
+        message: "Access Denied",
+        errorCode: ERROR.ACCESS_DENIED,
+      });
+    }
+
+    const isPasswordSame = await verifyPassword(
+      oldPassword,
+      checkUser.password
+    );
+
+    if (!isPasswordSame) {
+      return sendResponse({
+        res,
+        status: 400,
+        message: "Old password is wrong",
+        errorCode: ERROR.PASSWORD_WRONG,
+      });
+    }
+
+    const isPasswordDifferent = await verifyPassword(
+      newPassword,
+      checkUser.password
+    );
+
+    if (isPasswordDifferent) {
+      return sendResponse({
+        res,
+        status: 400,
+        message: "New password must be different from old password",
+        errorCode: ERROR.PASSWORD_SAME,
+      });
+    }
+
+    checkUser.password = getHashedPassword(newPassword);
+    await checkUser.save();
+
+    return sendResponse({
+      res,
+      status: 200,
+      message: "Change password success",
+    });
+  } catch (error) {
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
+  }
+};
+
 const handleGoogleLogin = async (accessToken, res) => {
   try {
     const decodedToken = await firebase.auth().verifyIdToken(accessToken);
@@ -608,7 +667,25 @@ const handleUpdateProfile = async (userId, updatedData, res) => {
 
     await checkUser.save();
 
-    return sendResponse({ res, status: 200, message: "Update success" });
+    const userData = {
+      _id: checkUser._id,
+      email: checkUser.email,
+      username: checkUser.username,
+      displayName: checkUser.displayName,
+      tag: checkUser.tag,
+      avatar: checkUser.avatar,
+      gender: checkUser.gender,
+      dob: checkUser.dob,
+      tel: checkUser.tel,
+      bio: checkUser.bio,
+    };
+
+    return sendResponse({
+      res,
+      status: 200,
+      message: "Update success",
+      data: userData,
+    });
   } catch (error) {
     if (error.name === "ValidationError") {
       return sendResponse({
@@ -668,6 +745,7 @@ export {
   handleRefreshToken,
   handleSendCode,
   handleResetPassword,
+  handleChangePassword,
   handleGoogleLogin,
   handleUpdateProfile,
   handleUploadFile,

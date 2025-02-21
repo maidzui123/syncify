@@ -24,6 +24,8 @@ router.post("/api/refresh-token", authControllers.refreshToken);
 router.post("/api/code/send", authControllers.sendCode);
 // Reset password
 router.post("/api/reset-password", authentication, authControllers.resetPassword);
+// Change password
+router.post("/api/change-password", authentication, authControllers.changePassword);
 // Login with Google
 router.post("/api/google/login", authControllers.googleLogin);
 // Update profile
