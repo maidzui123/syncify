@@ -9,7 +9,12 @@ authControllers.register = async (req, res) => {
   try {
     return await authServices.handleRegister(req, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -19,7 +24,12 @@ authControllers.verifyCode = async (req, res) => {
     const { code, email } = req.body;
     return await authServices.handleVerifyCode(code, email, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -29,7 +39,12 @@ authControllers.resendCode = async (req, res) => {
     const { email } = req.body;
     return await authServices.handleResendCode(email, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -39,7 +54,12 @@ authControllers.login = async (req, res) => {
     const { email, password } = req.body;
     return await authServices.handleLogin(email, password, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -49,7 +69,12 @@ authControllers.loginByAdmin = async (req, res) => {
     const { email, password } = req.body;
     return await authServices.handleLoginByAdmin(email, password, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 // Refresh Token
@@ -58,7 +83,12 @@ authControllers.refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
     return await authServices.handleRefreshToken(refreshToken, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -68,7 +98,12 @@ authControllers.sendCode = async (req, res) => {
     const { email } = req.body;
     return await authServices.handleSendCode(email, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -79,17 +114,47 @@ authControllers.resetPassword = async (req, res) => {
     const { password } = req.body;
     return await authServices.handleResetPassword(userId, password, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
+// Change Password
+authControllers.changePassword = async (req, res) => {
+  try {
+    const userId = req.user;
+    const { oldPassword, newPassword } = req.body;
+    return await authServices.handleChangePassword(
+      userId,
+      oldPassword,
+      newPassword,
+      res
+    );
+  } catch (error) {
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
+  }
+};
 // Login with Google
 authControllers.googleLogin = async (req, res) => {
   try {
     const { accessToken } = req.body;
     return await authServices.handleGoogleLogin(accessToken, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -106,7 +171,7 @@ authControllers.updateProfile = async (req, res) => {
       "dob",
       "country",
       "tel",
-      "bio"
+      "bio",
     ];
     const updatedData = Object.keys(req.body);
 
@@ -124,7 +189,12 @@ authControllers.updateProfile = async (req, res) => {
 
     return await authServices.handleUpdateProfile(userId, req.body, res);
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
 
@@ -154,8 +224,8 @@ authControllers.uploadFile = async (req, res) => {
     try {
       if (type === "video") {
         const compressedPath = await compressVideo(filePath, "./uploads");
-        fs.unlinkSync(filePath); 
-        req.file.path = compressedPath; 
+        fs.unlinkSync(filePath);
+        req.file.path = compressedPath;
       }
 
       const result = await authServices.handleUploadFile(
@@ -180,9 +250,13 @@ authControllers.uploadFile = async (req, res) => {
       });
     }
   } catch (error) {
-    return sendResponse({ res, status: 500, message: error.message, errorCode: ERROR.SERVER_ERROR });
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
   }
 };
-
 
 export default authControllers;

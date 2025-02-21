@@ -49,4 +49,5 @@ export const ERROR = {
   POST_ID_REQUIRED: "POST_ID_REQUIRED", // Post id required
   STAR_INVALID: "STAR_INVALID", // Star invalid
   POST_ARCHIVED_ALREADY: "POST_ARCHIVED_ALREADY", // Post already archived
+  PASSWORD_WRONG: "PASSWORD_WRONG", // Password wrong
 };
