@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_URL = "http://localhost:5001/api/admin";
-const UPLOAD_URL = "http://localhost:5001/api/upload";
+const API_URL = "http://localhost:3000/api/admin";
+const UPLOAD_URL = "http://localhost:3000/api/upload";
 // LOGIN
 export const login = async (email: string, password: string) => {
   const response = await axios
