@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5173" 
+    restart: always
+    volumes:
+      - ./admin:/usr/src/app
+      - /usr/src/app/node_modules 
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "8081:5173" # Chạy trên cổng 8081 nhưng forward tới 5173
+    restart: always
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    restart: always
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      REDIS_URL: redis://redis:6379
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always

@@ -667,7 +667,25 @@ const handleUpdateProfile = async (userId, updatedData, res) => {
 
     await checkUser.save();
 
-    return sendResponse({ res, status: 200, message: "Update success" });
+    const userData = {
+      _id: checkUser._id,
+      email: checkUser.email,
+      username: checkUser.username,
+      displayName: checkUser.displayName,
+      tag: checkUser.tag,
+      avatar: checkUser.avatar,
+      gender: checkUser.gender,
+      dob: checkUser.dob,
+      tel: checkUser.tel,
+      bio: checkUser.bio,
+    };
+
+    return sendResponse({
+      res,
+      status: 200,
+      message: "Update success",
+      data: userData,
+    });
   } catch (error) {
     if (error.name === "ValidationError") {
       return sendResponse({
