@@ -1,4 +1,5 @@
 import { User } from "../models/UserSchemas.js";
+import FriendRequest from "../models/FriendRequestSchemas.js";
 import { Post } from "../models/PostSchemas.js";
 import { Comment } from "../models/CommentSchemas.js";
 import { Assessment } from "../models/AssessmentSchemas.js";
@@ -454,7 +455,7 @@ const handleArchivePost = async (userId, postId, res) => {
         errorCode: ERROR.POST_ARCHIVED_ALREADY,
       });
     }
-    
+
     checkUser.archivePosts.push(postId);
     await checkUser.save();
 
@@ -754,7 +755,7 @@ const handleUpdateReply = async (
   }
 };
 
-const handleGetUserListPosts = async (userId, cursor, limit, res) => {
+const handleGetMyListPosts = async (userId, cursor, limit, res) => {
   try {
     const checkUser = await User.findById(userId);
 
@@ -773,6 +774,86 @@ const handleGetUserListPosts = async (userId, cursor, limit, res) => {
       query["_id"] = { $lt: cursor };
     }
     const posts = await Post.find(query)
+      .populate({
+        path: "createdBy",
+        select: "displayName avatar",
+      })
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const processedPosts = posts.map((post) => ({
+      ...post,
+      likes: post.likes.length,
+      shares: post.shares.length,
+      comments: post.comments.length,
+      isLiked: post.likes.some((like) => like.toString() === userId),
+      isShared: post.shares.some((like) => like.toString() === userId),
+    }));
+
+    const nextCursor =
+      posts.length == limit ? posts[posts.length - 1]._id : null;
+
+    return sendResponse({
+      res,
+      status: 200,
+      data: {
+        posts: processedPosts,
+        nextCursor,
+      },
+    });
+  } catch (error) {
+    return sendResponse({
+      res,
+      status: 500,
+      message: error.message,
+      errorCode: ERROR.SERVER_ERROR,
+    });
+  }
+};
+
+const handleGetUserListPosts = async (
+  userId,
+  currentUserId,
+  cursor,
+  limit,
+  res
+) => {
+  try {
+    const checkUser = await User.findById(userId);
+
+    if (!checkUser || checkUser.isBanned) {
+      return sendResponse({
+        res,
+        status: 401,
+        message: "Access Denied",
+        errorCode: ERROR.ACCESS_DENIED,
+      });
+    }
+
+    const checkCurrentUser = await User.findById(currentUserId);
+
+    if (!checkCurrentUser || checkCurrentUser.isBanned) {
+      return sendResponse({
+        res,
+        status: 404,
+        message: "User not found",
+        errorCode: ERROR.USER_NOT_FOUND,
+      });
+    }
+
+    const query = {
+      createdBy: currentUserId,
+      isDeleted: false,
+      isArchived: false,
+      privacy: "public",
+    };
+
+    if (cursor) {
+      query["_id"] = { $lt: cursor };
+    }
+    const posts = await Post.find(query)
+      .select("-__v -reports -isDeleted -isArchived")
       .populate({
         path: "createdBy",
         select: "displayName avatar",
@@ -908,7 +989,44 @@ const handleGetAllPosts = async (userId, cursor, limit, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
+    // Get all unique createdBy user IDs (excluding the calling user)
+    const creatorIds = [
+      ...new Set(
+        posts
+          .map((post) => post.createdBy._id.toString())
+          .filter((creatorId) => creatorId !== userId)
+      ),
+    ];
+
+    // Find friend requests between the calling user and post creators
+    const friendRequests = await FriendRequest.find({
+      $or: [
+        { fromUserId: userId, toUserId: { $in: creatorIds } },
+        { fromUserId: { $in: creatorIds }, toUserId: userId },
+      ],
+    }).lean();
+
     const processedPosts = posts.map((post) => {
+      const postCreatorId = post.createdBy._id.toString();
+
+      let friendRequestStatus = null;
+      if (postCreatorId !== userId) {
+        const request = friendRequests.find(
+          (req) =>
+            (req.fromUserId.toString() === userId &&
+              req.toUserId.toString() === postCreatorId) ||
+            (req.fromUserId.toString() === postCreatorId &&
+              req.toUserId.toString() === userId)
+        );
+
+        if (request) {
+          friendRequestStatus = {
+            status: request.status,
+            sentByMe: request.fromUserId.toString() === userId,
+          };
+        }
+      }
+
       return {
         ...post,
         likes: post.likes.length,
@@ -916,6 +1034,10 @@ const handleGetAllPosts = async (userId, cursor, limit, res) => {
         comments: post.comments.length,
         isLiked: post.likes.some((like) => like.toString() === userId),
         isShared: post.shares.some((like) => like.toString() === userId),
+        createdBy: {
+          ...post.createdBy,
+          friendRequest: friendRequestStatus,
+        },
       };
     });
 
@@ -1372,6 +1494,7 @@ export {
   handleUpdatePost,
   handleUpdateComment,
   handleUpdateReply,
+  handleGetMyListPosts,
   handleGetUserListPosts,
   handleGetUserListArchivedPosts,
   handleGetAllPosts,
@@ -1380,5 +1503,5 @@ export {
   handleGetMyAllPostsShared,
   handleGetUserAllPostsSharing,
   handleReportPost,
-  handleCreateAssessment
+  handleCreateAssessment,
 };

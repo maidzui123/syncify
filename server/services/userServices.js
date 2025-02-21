@@ -5,6 +5,7 @@ import sendResponse from "../helper/sendResponse.helper.js";
 import { sendNotification } from "../sockets/socketHandler.js";
 import { ERROR } from "../constants/error.js";
 import Chat from "../models/ChatSchemas.js";
+import mongoose from "mongoose";
 const handleUpdateStatus = async (userId, status) => {
   try {
     const checkUser = await User.findById(userId);
@@ -95,6 +96,24 @@ const handleGetUserProfile = async (userId, otherUserId, res) => {
       checkOtherUser.friends.includes(friendId)
     ).length;
 
+    let friendRequestStatus = null;
+
+    if (userId !== otherUserId) {
+      const friendRequest = await FriendRequest.findOne({
+        $or: [
+          { fromUserId: userId, toUserId: otherUserId },
+          { fromUserId: otherUserId, toUserId: userId },
+        ],
+      }).lean();
+
+      if (friendRequest) {
+        friendRequestStatus = {
+          status: friendRequest.status,
+          sentByMe: friendRequest.fromUserId.toString() === userId,
+        };
+      }
+    }
+
     return sendResponse({
       res,
       status: 200,
@@ -102,6 +121,7 @@ const handleGetUserProfile = async (userId, otherUserId, res) => {
         ...checkOtherUser.toObject(),
         isFriend,
         mutualFriends,
+        friendRequest: friendRequestStatus,
       },
     });
   } catch (error) {
@@ -616,6 +636,7 @@ const handleSearchUser = async (userId, username, tag, cursor, limit, res) => {
       matchQuery._id = { $gt: cursor };
     }
 
+    // First get the users
     const users = await User.aggregate([
       { $match: matchQuery },
       {
@@ -628,7 +649,6 @@ const handleSearchUser = async (userId, username, tag, cursor, limit, res) => {
           isFriend: { $in: ["$_id", checkUser.friends] },
         },
       },
-      // Chỉ chọn các trường cần thiết
       {
         $project: {
           _id: 1,
@@ -637,7 +657,7 @@ const handleSearchUser = async (userId, username, tag, cursor, limit, res) => {
           tag: 1,
           mutualFriends: 1,
           isFriend: 1,
-          avatar: 1, 
+          avatar: 1,
           bio: 1,
         },
       },
@@ -645,8 +665,41 @@ const handleSearchUser = async (userId, username, tag, cursor, limit, res) => {
       { $limit: Number(limit) },
     ]);
 
+    // If we have users, get the friend request information
+    if (users.length > 0) {
+      // Extract all user IDs
+      const userIds = users.map((user) => user._id);
+
+      // Find all friend requests between the current user and the found users
+      const friendRequests = await FriendRequest.find({
+        $or: [
+          { fromUserId: userId, toUserId: { $in: userIds } },
+          { fromUserId: { $in: userIds }, toUserId: userId },
+        ],
+      }).lean();
+
+      // Map the friend requests to the users
+      users.forEach((user) => {
+        const request = friendRequests.find(
+          (req) =>
+            (req.fromUserId.toString() === userId &&
+              req.toUserId.toString() === user._id.toString()) ||
+            (req.fromUserId.toString() === user._id.toString() &&
+              req.toUserId.toString() === userId)
+        );
+
+        user.friendRequest = request
+          ? {
+              status: request.status,
+              sentByMe: request.fromUserId.toString() === userId,
+            }
+          : null;
+      });
+    }
+
     const nextCursor =
       users.length == limit ? users[users.length - 1]._id : null;
+
     return sendResponse({
       res,
       status: 200,
