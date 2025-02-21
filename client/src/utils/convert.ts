@@ -27,14 +27,12 @@ export const convertBlobToFile = (blob: Blob) => {
 };
 
 export const timeSince = (dateString: string) => {
-    const pastDate = dayjs(dateString);
-    const now = dayjs();
     const locale = store.getState().locale.value
     dayjs.locale(locale)
-    // Kiểm tra nếu ngày trong tương lai
+    const pastDate = dayjs(dateString);
+    const now = dayjs();
     if (pastDate.isAfter(now)) {
         return "The given date is in the future.";
     }
-    // Tính khoảng thời gian tương đối
     return pastDate.from(now, true);
 }

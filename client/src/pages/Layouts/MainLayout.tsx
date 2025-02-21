@@ -87,7 +87,13 @@ const MainLayout = (props: mainLayoutProps) => {
         }).then(res => {
             console.log(res);
             if(res.status == 200){
-                // toast("")
+                toast({
+                    title: t('toast:change_pass_success')
+                })
+            }else{
+                toast({
+                    title: t('toast:change_pass_fail')
+                })
             }
         })
     };

@@ -120,7 +120,9 @@
     "delete_post_success": "Post Deleted Successfully",
     "delete_post_fail": "Failed To Delete Post",
     "share_post_success": "Post Shared Successfully",
-    "share_post_fail": "Failed To Share Post"
+    "share_post_fail": "Failed To Share Post",
+    "change_pass_success": "Change password successfully",
+    "change_pass_fail": "Change password fail"
   },
   "placeholder": {
     "optional": "Optional",

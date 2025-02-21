@@ -120,7 +120,9 @@
     "delete_post_success": "Xóa bài đăng thành công",
     "delete_post_fail": "Xóa bài đăng thất bại",
     "share_post_success": "Chia sẻ bài đăng thành công",
-    "share_post_fail": "Chia sẻ bài đăng thất bại"
+    "share_post_fail": "Chia sẻ bài đăng thất bại",
+    "change_pass_success": "Đổi mật khẩu thành công",
+    "change_pass_fail": "Đổi mật khẩu thất bại"
   },
   "placeholder": {
     "optional": "Tùy chọn",
