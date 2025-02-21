@@ -39,7 +39,7 @@ const authRoute = [
   },
   {
     key: '5',
-    path: "/profile",
+    path: "/profile/:userId",
     element: <ProfilePage/>,
   },
   {

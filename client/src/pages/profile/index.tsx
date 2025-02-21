@@ -7,7 +7,7 @@ import {RootState} from "@/redux/store.ts";
 import {useEffect, useRef, useState} from "react";
 import {postDef} from "@/constants/types/post.ts";
 import axios from "axios";
-import {POST_URL} from "@/constants/api.ts";
+import {FRIEND_URL, POST_URL, PROFILE_URL} from "@/constants/api.ts";
 import Lottie from "lottie-react";
 import LoadingAnimation from "@/assets/lotties/loading.json";
 import {clearEditPost, POST_MODAL_ACTION} from "@/redux/reducers/editPostReducer.ts";
@@ -15,6 +15,9 @@ import {Cake} from "lucide-react";
 import dayjs from "dayjs";
 import 'dayjs/locale/vi';
 import 'dayjs/locale/en';
+import {useParams} from "react-router";
+import {userDataDef} from "@/constants/types/auth.ts";
+import {useToast} from "@/hooks/use-toast.ts";
 
 const ProfilePage = () => {
 
@@ -27,14 +30,23 @@ const ProfilePage = () => {
     const [shareData, setShareData] = useState<postDef[]>([])
     const [shareCursor, setShareCursor] = useState<string>('')
     const [editProfileModal, setEditProfileModal] = useState<boolean>(false)
+    const [personalDetail, setPersonalDetail] = useState<userDataDef>()
+    const [isFriend, setIsFriend] = useState<boolean>()
 
     const postLoadingRef = useRef<HTMLDivElement>(null)
     const sharePostLoadingRef = useRef<HTMLDivElement>(null)
     const dispatch = useDispatch()
+    const { userId } = useParams()
+    const { toast } = useToast()
 
     useEffect(() => {
-        handleLoadMyPost()
+        handleLoadPost()
         handleLoadSharePost()
+        if(userId == 'me') {
+            setPersonalDetail(userData)
+        }else{
+            handleLoadOtherProfile()
+        }
     }, [])
 
     useEffect(() => {
@@ -46,7 +58,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && postCursor != '') {
-                handleLoadMyPost()
+                handleLoadPost()
             }
         }, { threshold: 1 })
 
@@ -60,7 +72,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && shareCursor != '') {
-                handleLoadMyPost()
+                handleLoadPost()
             }
         }, { threshold: 1 })
 
@@ -71,7 +83,7 @@ const ProfilePage = () => {
         return () => observer.disconnect()
     }, [shareData, shareCursor]);
 
-    const handleLoadMyPost = () => {
+    const handleLoadPost = () => {
         if(postCursor != null){
             postLoadingRef!.current!.style.opacity = '1'
             axios.get(POST_URL.GET_MY_POSTS_URL, {
@@ -122,26 +134,52 @@ const ProfilePage = () => {
         dispatch(clearEditPost())
     }
 
+    const handleLoadOtherProfile = () => {
+        axios.get(PROFILE_URL.GET_OTHER_PROFILE_URL + `/${userId}`).then(res => {
+            if(res.status == 200) {
+                setPersonalDetail(res.data)
+                setIsFriend(res.data.isFriend)
+            }
+        })
+    }
+
+    const handleSendFriendReq = (id: string) => {
+        axios.post(FRIEND_URL.SEND_FRIEND_REQUEST, {
+            friendId: id,
+        }).then(res => {
+            if(res.status == 200){
+                toast({
+                    title: t('toast:accept_friend_success')
+                })
+            }else{
+                toast({
+                    title: t('toast:req_fail')
+                })
+            }
+        })
+    }
+
     return <MainLayout>
         <div className='h-full flex flex-1 justify-center text-white'>
             <div className='min-w-[640px] w-[80%] my-6'>
                 <div className='w-full h-full rounded-xl flex flex-col items-center mb-3 bg-[#181818] overflow-y-scroll no-scrollbar'>
                     <div className='flex w-full p-6'>
                         <div className='flex flex-1 flex-col justify-center'>
-                            <p className='font-bold text-3xl'>{userData?.username}</p>
-                            <p className='text-xl'>{userData?.displayName}</p>
+                            <p className='font-bold text-3xl'>{personalDetail?.username}</p>
+                            <p className='text-xl'>{personalDetail?.displayName}</p>
                             <div className='flex items-center my-1'>
                                 <Cake size={24} color='#ffffff'/>
-                                <p style={{ lineHeight: 'initial' }} className='ml-3 text-base'>{dayjs(userData?.dob).locale(locale).format('DD/MM/YYYY')}</p>
+                                <p style={{ lineHeight: 'initial' }} className='ml-3 text-base'>{dayjs(personalDetail?.dob).locale(locale).format('DD/MM/YYYY')}</p>
                             </div>
                         </div>
                         <Avatar className='cursor-pointer h-32 w-32'>
-                            <AvatarImage className='bg-white' src={userData?.avatar} alt='avatar'/>
+                            <AvatarImage className='bg-white' src={personalDetail?.avatar} alt='avatar'/>
                             <AvatarFallback delayMs={600}>?</AvatarFallback>
                         </Avatar>
                     </div>
-                    {userData?.bio && <p className='w-full p-6'>{userData?.bio}</p>}
-                    <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:edit")}</button>
+                    {personalDetail?.bio && <p className='w-full p-6'>{personalDetail?.bio}</p>}
+                    {userId == 'me' && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:edit")}</button>}
+                    {userId != 'me' && isFriend && <button type='button' className='mx-4 rounded-lg border-white border p-2 w-[92%] my-4' onClick={() => setEditProfileModal(true)}>{t("button:add_friend")}</button>}
                     <div className='flex w-full mt-2'>
                         <button className='flex flex-1 justify-center items-center text-lg font-medium py-2' type='button' style={{ color: profileTab == 0 ? '#ffffff' : '#777777', borderBottom: profileTab == 0 ? '2px solid #ffffff' : undefined }} onClick={() => setProfileTab(0)}>
                             {t("button:my_post")}
@@ -153,7 +191,7 @@ const ProfilePage = () => {
                     <div className='border-b border-gray-400 w-full'/>
                     <div className='w-full' style={{ display: profileTab == 0 ? 'block' : 'none' }}>
                         {postData?.map((post, index) => <div key={index} className='w-full' style={{borderBottom: index != postData.length - 1 ? '1px solid white' : undefined}}>
-                            <Post data={post} userData={userData!} onRemovePost={handleRemovePost} />
+                            <Post data={post} userData={personalDetail!} onRemovePost={handleRemovePost} />
                         </div>)}
                         <div className='w-full h-10 flex justify-center items-center' ref={postLoadingRef}>
                             <div className='h-10 w-10'>
@@ -163,7 +201,7 @@ const ProfilePage = () => {
                     </div>
                     <div className='w-full' style={{ display: profileTab == 1 ? 'block' : 'none' }}>
                         {shareData?.map((post, index) => <div key={index} className='w-full' style={{borderBottom: index != shareData.length - 1 ? '1px solid white' : undefined}}>
-                            <Post data={post} userData={userData!} onRemovePost={handleRemovePost} />
+                            <Post data={post} userData={personalDetail!} onRemovePost={handleRemovePost} />
                         </div>)}
                         <div className='w-full h-10 flex justify-center items-center' ref={sharePostLoadingRef}>
                             <div className='h-10 w-10'>

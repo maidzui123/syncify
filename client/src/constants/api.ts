@@ -15,6 +15,7 @@ export const AUTH_URL = {
 export const PROFILE_URL = {
     UPDATE_PROFILE_URL: '/api/user',
     GET_PROFILE_URL: '/api/users/profile/me',
+    GET_OTHER_PROFILE_URL: '/api/users/profile'
 }
 
 export const MEDIA_URL = {
@@ -34,7 +35,7 @@ export const POST_URL = {
     ARCHIVE_POST_URL: '/api/posts/archive',
     DELETE_POST_URL: '/api/posts',
     EDIT_POST_URL: '/api/posts',
-    GET_MY_SHARE_POST_URL: '/api/posts/sharing/me'
+    GET_MY_SHARE_POST_URL: '/api/posts/sharing/me',
 }
 
 export const CHAT_URL = {

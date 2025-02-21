@@ -67,7 +67,8 @@
     "my_post": "Bài đăng",
     "repost": "Đăng lại",
     "hidden_post": "Bài đăng ẩn",
-    "save": "Lưu"
+    "save": "Lưu",
+    "add_friend": "Thêm bạn bè"
   },
   "error": {
     "incorrect_password": "Sai mật khẩu",

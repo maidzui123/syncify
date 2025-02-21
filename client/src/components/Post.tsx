@@ -227,7 +227,7 @@ const Post = (props: postProps) => {
                         <p className='text-sm text-gray-400'>{timeSince(data?.createdAt) + ` ${t("label:ago").toLowerCase()}`}</p>
                     </div>
                 </div>
-                {userData?._id == data?.createdBy?._id && <DropdownMenu>
+                <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                         <button type='button'
                                 className='p-2 my-2 cursor-pointer rounded-full transition hover:bg-[rgba(255,255,255,.3)]'>
@@ -235,10 +235,10 @@ const Post = (props: postProps) => {
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-[#181818] text-white">
-                        {data?.createdBy._id != userData?._id && <DropdownMenuItem className='group hover:bg-gray-300 hover:text-black cursor-pointer' onClick={handleArchivePost}>
+                        <DropdownMenuItem className='group hover:bg-gray-300 hover:text-black cursor-pointer' onClick={handleArchivePost}>
                             <EyeOff className='group-hover:text-black text-white' size={24}/>
                             <p>{t("button:hide_post")}</p>
-                        </DropdownMenuItem>}
+                        </DropdownMenuItem>
                         {data?.createdBy._id == userData?._id && <DropdownMenuItem className='group hover:bg-gray-300 hover:text-black cursor-pointer' onClick={handleEditPost}>
                             <PencilLine className='group-hover:text-black text-white' size={24}/>
                             <p>{t("button:edit_post")}</p>
@@ -248,7 +248,7 @@ const Post = (props: postProps) => {
                             <p>{t("button:delete_post")}</p>
                         </DropdownMenuItem>}
                     </DropdownMenuContent>
-                </DropdownMenu>}
+                </DropdownMenu>
             </div>
             <p className='w-full flex-1 bg-transparent font-medium text-lg'>{data?.content}</p>
             <Swiper mediaList={data?.media} isEditable={false}/>
